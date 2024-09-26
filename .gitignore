@@ -3,3 +3,12 @@ npm-debug.log
 .DS_Store
 android/build/*
 xcuserdata
+
+yarn-error.log
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

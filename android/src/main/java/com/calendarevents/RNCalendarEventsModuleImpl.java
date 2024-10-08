@@ -41,8 +41,8 @@ import java.util.HashMap;
 import java.util.TimeZone;
 import android.util.Log;
 
-public class RNCalendarEvents extends ReactContextBaseJavaModule implements PermissionListener {
-
+public class RNCalendarEventsModuleImpl {
+    static final String NAME = "RNCalendarEvents";
     private static int PERMISSION_REQUEST_CODE = 37;
     private final ReactContext reactContext;
     private static final String RNC_PREFS = "REACT_NATIVE_CALENDAR_PREFERENCES";
@@ -53,14 +53,9 @@ public class RNCalendarEvents extends ReactContextBaseJavaModule implements Perm
         this.reactContext = reactContext;
     }
 
-    @Override
-    public String getName() {
-        return "RNCalendarEvents";
-    }
-
     // region Calendar Permissions
     private void requestCalendarPermission(boolean limited, final Promise promise) {
-        Activity currentActivity = getCurrentActivity();
+        Activity currentActivity = this.reactContext.getCurrentActivity();
         if (currentActivity == null) {
             promise.reject("E_ACTIVITY_DOES_NOT_EXIST", "Activity doesn't exist");
             return;
@@ -114,14 +109,14 @@ public class RNCalendarEvents extends ReactContextBaseJavaModule implements Perm
     }
 
     private boolean shouldShowRequestPermissionRationale(boolean limited) {
-        Activity currentActivity = getCurrentActivity();
+        Activity currentActivity = this.reactContext.getCurrentActivity();
 
         if (currentActivity == null) {
-            Log.w(this.getName(), "Activity doesn't exist");
+            Log.w(NAME, "Activity doesn't exist");
             return false;
         }
         if (!(currentActivity instanceof PermissionAwareActivity)) {
-            Log.w(this.getName(), "Activity does not implement the PermissionAwareActivity interface");
+            Log.w(NAME, "Activity does not implement the PermissionAwareActivity interface");
             return false;
         }
 
@@ -679,7 +674,7 @@ public class RNCalendarEvents extends ReactContextBaseJavaModule implements Perm
                             eventID = Long.parseLong(eventUri.getLastPathSegment());
                         }
                     } catch (Exception e) {
-                        Log.d(this.getName(), "Event exception error", e);
+                        Log.d(NAME, "Event exception error", e);
                     }
                 }
             }
@@ -928,7 +923,7 @@ public class RNCalendarEvents extends ReactContextBaseJavaModule implements Perm
             try {
                 minutes = cursor.getInt(0);
             } catch (Exception e) {
-                Log.d(this.getName(), "Error parsing event minutes", e);
+                Log.d(NAME, "Error parsing event minutes", e);
                 continue;
             }
 
@@ -1197,7 +1192,7 @@ public class RNCalendarEvents extends ReactContextBaseJavaModule implements Perm
         try {
             colorHex = String.format("#%06X", (0xFFFFFF & cursor.getInt(7)));
         } catch (Exception e) {
-            Log.d(this.getName(), "Error parsing calendar color", e);
+            Log.d(NAME, "Error parsing calendar color", e);
         }
         calendar.putString("color", colorHex);
 
@@ -1250,7 +1245,6 @@ public class RNCalendarEvents extends ReactContextBaseJavaModule implements Perm
     }
 
     // region React Native Methods
-    @ReactMethod
     public void checkPermissions(boolean limited, Promise promise) {
         try {
             SharedPreferences sharedPreferences = reactContext.getSharedPreferences(RNC_PREFS,
@@ -1272,7 +1266,6 @@ public class RNCalendarEvents extends ReactContextBaseJavaModule implements Perm
         }
     }
 
-    @ReactMethod
     public void requestPermissions(boolean limited, Promise promise) {
         try {
             SharedPreferences sharedPreferences = reactContext.getSharedPreferences(RNC_PREFS,
@@ -1292,7 +1285,6 @@ public class RNCalendarEvents extends ReactContextBaseJavaModule implements Perm
         }
     }
 
-    @ReactMethod
     public void getCalendars(final Promise promise) {
         if (this.haveCalendarPermissions(true)) {
             try {
@@ -1317,7 +1309,6 @@ public class RNCalendarEvents extends ReactContextBaseJavaModule implements Perm
         }
     }
 
-    @ReactMethod
     public void saveCalendar(final ReadableMap options, final Promise promise) {
         if (!this.haveCalendarPermissions(false)) {
             promise.reject("save calendar error", "unauthorized to access calendar");
@@ -1342,7 +1333,6 @@ public class RNCalendarEvents extends ReactContextBaseJavaModule implements Perm
         }
     }
 
-    @ReactMethod
     public void removeCalendar(final String CalendarID, final Promise promise) {
         if (this.haveCalendarPermissions(false)) {
             try {
@@ -1369,7 +1359,6 @@ public class RNCalendarEvents extends ReactContextBaseJavaModule implements Perm
 
     }
 
-    @ReactMethod
     public void saveEvent(final String title, final ReadableMap details, final ReadableMap options,
             final Promise promise) {
         if (this.haveCalendarPermissions(false)) {
@@ -1400,7 +1389,6 @@ public class RNCalendarEvents extends ReactContextBaseJavaModule implements Perm
         }
     }
 
-    @ReactMethod
     public void getEvents(final Dynamic startDate, final Dynamic endDate, final ReadableArray calendars,
             final Promise promise) {
 
@@ -1429,7 +1417,6 @@ public class RNCalendarEvents extends ReactContextBaseJavaModule implements Perm
 
     }
 
-    @ReactMethod
     public void getEventById(final String eventID, final Promise promise) {
         if (this.haveCalendarPermissions(true)) {
             try {
@@ -1456,7 +1443,6 @@ public class RNCalendarEvents extends ReactContextBaseJavaModule implements Perm
 
     }
 
-    @ReactMethod
     public void removeEvent(final String eventID, final ReadableMap options, final Promise promise) {
         if (this.haveCalendarPermissions(false)) {
             try {
@@ -1484,8 +1470,7 @@ public class RNCalendarEvents extends ReactContextBaseJavaModule implements Perm
 
     }
 
-    @ReactMethod
-    public void openEventInCalendar(int eventID) {
+    public void openEventInCalendar(int eventID, final Promise promise) {
         try {
             Uri uri = ContentUris.withAppendedId(CalendarContract.Events.CONTENT_URI, eventID);
             Intent sendIntent = new Intent(Intent.ACTION_VIEW).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).setData(uri);
@@ -1498,7 +1483,6 @@ public class RNCalendarEvents extends ReactContextBaseJavaModule implements Perm
         }
     }
 
-    @ReactMethod
     public void uriForCalendar(Promise promise) {
         promise.resolve(CalendarContract.Events.CONTENT_URI.toString());
     }

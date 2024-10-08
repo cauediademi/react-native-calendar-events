@@ -1,28 +1,46 @@
 package com.calendarevents;
 
-import com.facebook.react.ReactPackage;
+import androidx.annotation.Nullable;
+
+import com.facebook.react.TurboReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.uimanager.ViewManager;
+import com.facebook.react.module.model.ReactModuleInfo;
+import com.facebook.react.module.model.ReactModuleInfoProvider;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-public class RNCalendarEventsPackage implements ReactPackage {
+public class RNCalendarEventsPackage extends TurboReactPackage {
 
-    @Override
-    public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
-        return Collections.emptyList();
+  @Nullable
+  @Override
+  public NativeModule getModule(String name, ReactApplicationContext reactContext) {
+    if (name.equals(RNCalendarEventsModuleImpl.NAME)) {
+      return new RNCalendarEventsModule(reactContext);
+    } else {
+      return null;
     }
+  }
 
-    @Override
-    public List<NativeModule> createNativeModules(
-            ReactApplicationContext reactContext) {
-        List<NativeModule> modules = new ArrayList<>();
+  @Override
+  public ReactModuleInfoProvider getReactModuleInfoProvider() {
+    return () -> {
+      final Map<String, ReactModuleInfo> moduleInfos = new HashMap<>();
+      boolean isTurboModule = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
 
-        modules.add(new RNCalendarEvents(reactContext));
+      ReactModuleInfo moduleInfo = new ReactModuleInfo(
+        RNCalendarEventsModuleImpl.NAME,
+        RNCalendarEventsModuleImpl.NAME,
+        false,
+        false,
+        true,
+        false,
+        isTurboModule
+      );
 
-        return modules;
-    }
+      moduleInfos.put(RNCalendarEventsModuleImpl.NAME, moduleInfo);
+      return moduleInfos;
+    };
+  }
 }

@@ -1,5 +1,6 @@
-require 'json'
-package = JSON.parse(File.read('./package.json'))
+require "json"
+
+package = JSON.parse(File.read(File.join(__dir__, "package.json")))
 
 Pod::Spec.new do |s|
   s.name         = 'RNCalendarEvents'
@@ -10,10 +11,9 @@ Pod::Spec.new do |s|
   s.summary         = package["description"]
   s.authors         = package["author"]
   s.homepage        = package["homepage"]
-  
-  s.platform     = :ios, '9.0'
-  
+  s.platform        = :ios, '14.0'
   s.source          = { :git => package["repository"]["url"], :tag => s.version }
-  s.source_files  = 'ios/*.{h,m}'
+  s.source_files    = "ios/**/*.{h,m,mm,swift}"
 
+  install_modules_dependencies(s)
 end

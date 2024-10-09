@@ -1,6 +1,6 @@
 {
   "name": "react-native-calendar-events",
-  "version": "3.0.0",
+  "version": "2.2.0",
   "description": "React Native module for IOS Calendar Events",
   "homepage": "https://github.com/wmcmahan/react-native-calendar-events",
   "repository": {
@@ -28,35 +28,28 @@
     "RNCalendarEvents.podspec"
   ],
   "peerDependencies": {
-    "react-native": ">=0.74.0"
+    "react-native": ">=0.60.0"
   },
   "scripts": {
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+    "format": "prettier --write \"**/*.{md,json,js,css}\"",
     "release": "npmpub",
     "test": "echo \"Everything is awesome!\""
   },
   "devDependencies": {
-    "husky": "^9.1.6",
-    "lint-staged": "^15.2.10",
-    "npmpub": "^5.1.1",
-    "prettier": "^3.3.3"
+    "husky": "^4.0.0",
+    "lint-staged": "^10.0.0",
+    "npmpub": "^5.0.0",
+    "prettier": "^2.0.0"
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "npx prettier --config ./.prettierrc.js --config-precedence prefer-file --write",
-      "git add"
+    "*.{md,json,js,css}": [
+      "prettier --write"
     ]
   },
-  "engines": {
-    "node": ">=18"
-  },
-  "packageManager": "yarn@4.5.0",
-  "codegenConfig": {
-    "name": "RNCalendarEventsSpec",
-    "type": "modules",
-    "jsSrcsDir": "src",
-    "android": {
-      "javaPackageName": "com.calendarevents"
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
     }
-  }
+  },
+  "packageManager": "yarn@4.5.0"
 }

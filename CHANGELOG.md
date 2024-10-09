@@ -2,7 +2,6 @@
 
 ## 3.0.0 - BREAKING CHANGES
 
-- BREAKING CHANGE: React Native 0.74.0+ required
 - BREAKING CHANGE: Unified the API between Android and iOS. Platform specific functions that are not implemented act as no-ops.
 
 findCalendars -> getCalendars
@@ -11,7 +10,6 @@ findAllEvents (Android) / fetchAllEvents (iOS) -> getEvents
 
 - POSSIBLE BREAKING CHANGE: Permission check parameter changed from `readOnly` to `limited`. The switch was made to accommodate the new iOS 17 write-only access while still applying to Android's read-only access
 - Feature: iOS17 permission handling
-- Feature: New arch support
 - Fix: Handle Exception on Android
 - Fix: Android event reminder times
 - Fix: iOS can't edit recurring events
